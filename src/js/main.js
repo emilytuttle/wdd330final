@@ -93,7 +93,27 @@ getMovieData()
 
 
 async function viewWatchlist() {
+list.innerHTML = ""
+const box = document.createElement('div');
+box.setAttribute('id', "box")
+list.appendChild(box);
+box.setAttribute('id', "box")
+const message = document.createElement('div');
+box.setAttribute('id', "message")
+message.innerHTML = `<h2>Watchlist</h2>`
+box.appendChild(message);
+ const watching = getLocalStorage("watchlist")
+ for(let i=0; i < watching.length; i++) {
+  const listItem = document.createElement('div');
+  listItem.setAttribute('id', "watchItem")
+  listItem.textContent = watching[i]; 
+ 
   
+  
+  box.appendChild(listItem);
+
+ }
+
 }
 
 
@@ -101,6 +121,7 @@ allButton.addEventListener("click", getMovieData)
 disneyButton.addEventListener("click", getDisneyMovieData)
 marvelButton.addEventListener("click", getMarvelMovieData)
 pixarButton.addEventListener("click", getPixarMovieData)
+const watchlistButton = document.getElementById("watchlist-button")
 watchlistButton.addEventListener("click", viewWatchlist)
 
 const addButton = document.querySelectorAll(`add-to-watchlist`)
