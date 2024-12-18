@@ -1,4 +1,9 @@
-const list = document.getElementById("pet-list")
+const list = document.getElementById("movie-container")
+const allButton = document.getElementById("all-button")
+const disneyButton = document.getElementById("disney-button")
+const marvelButton = document.getElementById("marvel-button")
+const pixarButton = document.getElementById("pixar-button")
+list.innerHTML = ""
 
 
 // Define the API endpoint and headers
@@ -12,98 +17,151 @@ const headers = {
   'X-Rapidapi-Host': 'movie-database-alternative.p.rapidapi.com',
 };
 
-async function getMovieData() {
-  // Make the HTTP GET request using the Fetch API
+async function getData(url) {
+  list.innerHTML = ""
   fetch(url, { method: 'GET', headers: headers })
   .then(response => {
     if (!response.ok) {
       throw new Error(`Error fetching data: ${response.status}`);
     }
-    return response.json(); // Parse the response as JSON
+    return response.json();
   })
   .then(data => {
-    console.log('Movie Data:', data); // Log the data to the console
-    if(data.Search.length > 20) {
+    console.log('Movie Data:', data);
+    if(data.Search.length > 50) {
       for (let i=0; i < 20; i++) {
-        const listItem = document.createElement('li'); // Create an <li> element
-          listItem.textContent = data.Search[i].Title; // Set the text of the <li> to the movie title
+        const listItem = document.createElement('li');
+          listItem.textContent = data.Search[i].Title; 
           list.appendChild(listItem);
       } 
     } else {
       for (let i=0; i < data.Search.length; i++) {
         const listItem = document.createElement('div');
-        // listItem.setAttribute('id', )
+        listItem.setAttribute('id', "listItem")
           // listItem.textContent = data.Search[i].Title; 
           listItem.innerHTML = `
-            <img src="${data.Search[i].Title}" alt="movie poster of ${data.Search[i].Title}">
-            <h2>${data.Search[i].Title}</h2>
-            <h3>test</h3>
+            <img src="${data.Search[i].Poster}" alt="movie poster of ${data.Search[i].Title} class="movie-img" width="178">
+            <h1 id="movie-title">${data.Search[i].Title} (${data.Search[i].Year})</h1>
+            <div class="add-to-watchlist">Add to Watchlist</div>
           `
           
           list.appendChild(listItem);
+
         }
+        
     }
+    const addToWatchlistButtons = document.querySelectorAll(".add-to-watchlist");
+        addToWatchlistButtons.forEach(button => {
+        button.addEventListener("click", addToWatchList);
+      });
   })
   .catch(error => {
     console.error('There was an error!', error); // Handle any errors that occur
   });
-  
+}
+
+async function getMovieData() {
+  getData(url)
+}
+
+async function getDisneyMovieData() {
+  getData(disneyUrl)
+}
+
+async function getMarvelMovieData() {
+  getData(marvelUrl)
+}
+
+async function getPixarMovieData() {
+  getData(pixarUrl)
 }
 
 getMovieData()
 
+// function addToWatchList() {
+//   let watchlistItems
+//   if (getLocalStorage("watchlist")) {
+//     watchlistItems = getLocalStorage("watchlist");
+//     watchlistItems += 1
+    
+// } else {
+//     setLocalStorage("watchlist", watchlistItems += 1)
+// }
 
-async function getDisneyMovieData() {
-  // Make the HTTP GET request using the Fetch API
-  fetch(disneyUrl, { method: 'GET', headers: headers })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`Error fetching data: ${response.status}`);
+// setLocalStorage("watchlist", watchlistItems)
+// }
+
+
+allButton.addEventListener("click", getMovieData)
+disneyButton.addEventListener("click", getDisneyMovieData)
+marvelButton.addEventListener("click", getMarvelMovieData)
+pixarButton.addEventListener("click", getPixarMovieData)
+
+const addButton = document.querySelectorAll(`add-to-watchlist`)
+addButton.addEventListener("click", addToWatchList)
+
+
+function addToWatchList(event) {
+  // Get the movie title from the clicked element's parent div
+  const movieTitle = event.target.closest('#listItem').querySelector('#movie-title').textContent;
+
+  // Retrieve the existing watchlist from localStorage
+  let watchlistItems = [];
+
+    if (getLocalStorage("watchlist")) {
+        watchlistItems = getLocalStorage("watchlist");
+        if (!Array.isArray(watchlistItems)) {
+            watchlistItems = [];
+            watchlistItems.push(movieTitle);
+            setLocalStorage("watchlist", watchlistItems);
+            alert(`${movieTitle} has been added to your watchlist!`);
+        } else {
+          if (!watchlistItems.includes(movieTitle)) {
+            watchlistItems.push(movieTitle);
+            setLocalStorage("watchlist", watchlistItems);
+            alert(`${movieTitle} has been added to your watchlist!`);
+          } else {
+            alert(`${movieTitle} is already in your watchlist.`);
+          }
+        }
+        
+    } else {
+        watchlistItems.push(movieTitle);
+        setLocalStorage("watchlist", watchlistItems);
+        alert(`${movieTitle} has been added to your watchlist!`);
     }
-    return response.json(); // Parse the response as JSON
-  })
-  .then(data => {
-    console.log('Disney Movie Data:', data); // Log the data to the console
-  })
-  .catch(error => {
-    console.error('There was an error!', error); // Handle any errors that occur
-  });
+  
 }
 
-getDisneyMovieData()
 
-async function getMarvelMovieData() {
-  // Make the HTTP GET request using the Fetch API
-  fetch(marvelUrl, { method: 'GET', headers: headers })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`Error fetching data: ${response.status}`);
-    }
-    return response.json(); // Parse the response as JSON
-  })
-  .then(data => {
-    console.log('Marvel Movie Data:', data); // Log the data to the console
-  })
-  .catch(error => {
-    console.error('There was an error!', error); // Handle any errors that occur
-  });
+///////////////
+
+// Local storage
+// retrieve data from localstorage
+export function getLocalStorage(key) {
+  return JSON.parse(localStorage.getItem(key));
+}
+// save data to local storage
+export function setLocalStorage(key, data) {
+  localStorage.setItem(key, JSON.stringify(data));
 }
 
 
-async function getPixarMovieData() {
-  // Make the HTTP GET request using the Fetch API
-  fetch(pixarUrl, { method: 'GET', headers: headers })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`Error fetching data: ${response.status}`);
-    }
-    return response.json(); // Parse the response as JSON
-  })
-  .then(data => {
-    console.log('Pixar Movie Data:', data); // Log the data to the console
-  })
-  .catch(error => {
-    console.error('There was an error!', error); // Handle any errors that occur
-  });
-}
+////////////////
+// WEATHER INFO
 
+const forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=40.7608&lon=-111.8910&appid=53778186298c1e2280bfff587895ed1d&units=imperial'
+  async function forecastFetch() {
+    try {
+      const response = await fetch(forecastUrl);
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data); // testing only
+      } else {
+          throw Error(await response.text());
+      }
+    } catch (error) {
+        console.log(error);
+    }
+  }
+  forecastFetch()
