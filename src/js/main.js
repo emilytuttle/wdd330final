@@ -4,6 +4,7 @@ const disneyButton = document.getElementById("disney-button")
 const marvelButton = document.getElementById("marvel-button")
 const pixarButton = document.getElementById("pixar-button")
 list.innerHTML = ""
+let forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=40.7608&lon=-111.8910&appid=53778186298c1e2280bfff587895ed1d&units=imperial'
 
 
 // Define the API endpoint and headers
@@ -60,36 +61,25 @@ async function getData(url) {
   });
 }
 
-async function getMovieData() {
-  getData(url)
-}
-
-async function getDisneyMovieData() {
-  getData(disneyUrl)
-}
-
-async function getMarvelMovieData() {
-  getData(marvelUrl)
-}
-
-async function getPixarMovieData() {
-  getData(pixarUrl)
-}
-
-getMovieData()
-
-// function addToWatchList() {
-//   let watchlistItems
-//   if (getLocalStorage("watchlist")) {
-//     watchlistItems = getLocalStorage("watchlist");
-//     watchlistItems += 1
-    
-// } else {
-//     setLocalStorage("watchlist", watchlistItems += 1)
+// async function getMovieData() {
+//   getData(url)
 // }
 
-// setLocalStorage("watchlist", watchlistItems)
+// async function getDisneyMovieData() {
+//   getData(disneyUrl)
 // }
+
+// async function getMarvelMovieData() {
+//   getData(marvelUrl)
+// }
+
+// async function getPixarMovieData() {
+//   getData(pixarUrl)
+// }
+
+// getMovieData()
+
+
 
 
 async function viewWatchlist() {
@@ -107,22 +97,22 @@ box.appendChild(message);
   const listItem = document.createElement('div');
   listItem.setAttribute('id', "watchItem")
   listItem.textContent = watching[i]; 
- 
-  
-  
   box.appendChild(listItem);
-
  }
 
 }
 
 
-allButton.addEventListener("click", getMovieData)
-disneyButton.addEventListener("click", getDisneyMovieData)
-marvelButton.addEventListener("click", getMarvelMovieData)
-pixarButton.addEventListener("click", getPixarMovieData)
+
+
+// allButton.addEventListener("click", getMovieData)
+// disneyButton.addEventListener("click", getDisneyMovieData)
+// marvelButton.addEventListener("click", getMarvelMovieData)
+// pixarButton.addEventListener("click", getPixarMovieData)
 const watchlistButton = document.getElementById("watchlist-button")
 watchlistButton.addEventListener("click", viewWatchlist)
+const weatherButton = document.getElementById("weather-button")
+weatherButton.addEventListener("click", viewWeather)
 
 const addButton = document.querySelectorAll(`add-to-watchlist`)
 addButton.addEventListener("click", addToWatchList)
@@ -177,18 +167,49 @@ export function setLocalStorage(key, data) {
 ////////////////
 // WEATHER INFO
 
-const forecastUrl = 'https://api.openweathermap.org/data/2.5/forecast?lat=40.7608&lon=-111.8910&appid=53778186298c1e2280bfff587895ed1d&units=imperial'
+
+
   async function forecastFetch() {
+    list.innerHTML = ""
     try {
       const response = await fetch(forecastUrl);
       if (response.ok) {
         const data = await response.json();
-        console.log(data); // testing only
+        
+        console.log("data list here", data)
+        
+        const weatherBox = document.createElement('div')
+        weatherBox.setAttribute('id', "weatherBox")
+        list.appendChild(weatherBox)
+        const forecastBox = document.createElement('div')
+        forecastBox.setAttribute('id', "forecastBox")
+        weatherBox.appendChild(forecastBox)
+        forecastBox.innerHTML=`
+        <h1>Weather<h1/>
+        <p id="weather-message">Everyone knows that the weather can play a role in your movie schedule! Check out tommorrow's forecast at 6pm in Salt Lake City, and plan on a movie if the weather is bad!</p>
+        <div id="weather-container">
+        <p>City: ${data.city.name}</p>
+        <p>Population: ${data.city.population}</p>
+        <p>Date & Time: ${data.list[10].dt_txt}</p>
+        <p>General Description: ${data.list[10].weather[0].description}</p>
+        <p>Temperature: ${data.list[10].main.temp_min} - ${data.list[10].main.temp_max}</p>
+        <p>Humidity: ${data.list[10].main.humidity} Percent</p>
+        <p>Wind Angle: ${data.list[10].wind.deg} Degrees</p>
+        </div>
+        
+        `
+
       } else {
           throw Error(await response.text());
       }
     } catch (error) {
         console.log(error);
     }
+    
   }
-  forecastFetch()
+
+
+  // function viewWeather() {
+  //   forecastFetch()
+    
+  //   }
