@@ -92,10 +92,16 @@ getMovieData()
 // }
 
 
+async function viewWatchlist() {
+  
+}
+
+
 allButton.addEventListener("click", getMovieData)
 disneyButton.addEventListener("click", getDisneyMovieData)
 marvelButton.addEventListener("click", getMarvelMovieData)
 pixarButton.addEventListener("click", getPixarMovieData)
+watchlistButton.addEventListener("click", viewWatchlist)
 
 const addButton = document.querySelectorAll(`add-to-watchlist`)
 addButton.addEventListener("click", addToWatchList)
