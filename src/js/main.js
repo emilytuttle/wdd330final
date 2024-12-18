@@ -61,23 +61,23 @@ async function getData(url) {
   });
 }
 
-// async function getMovieData() {
-//   getData(url)
-// }
+async function getMovieData() {
+  getData(url)
+}
 
-// async function getDisneyMovieData() {
-//   getData(disneyUrl)
-// }
+async function getDisneyMovieData() {
+  getData(disneyUrl)
+}
 
-// async function getMarvelMovieData() {
-//   getData(marvelUrl)
-// }
+async function getMarvelMovieData() {
+  getData(marvelUrl)
+}
 
-// async function getPixarMovieData() {
-//   getData(pixarUrl)
-// }
+async function getPixarMovieData() {
+  getData(pixarUrl)
+}
 
-// getMovieData()
+getMovieData()
 
 
 
@@ -90,9 +90,11 @@ list.appendChild(box);
 box.setAttribute('id', "box")
 const message = document.createElement('div');
 box.setAttribute('id', "message")
-message.innerHTML = `<h2>Watchlist</h2>`
+const watching = getLocalStorage("watchlist")
+if (watching) {
+  message.innerHTML = `<h2>Watchlist(${watching.length})</h2>`
+}
 box.appendChild(message);
- const watching = getLocalStorage("watchlist")
  for(let i=0; i < watching.length; i++) {
   const listItem = document.createElement('div');
   listItem.setAttribute('id', "watchItem")
@@ -105,10 +107,10 @@ box.appendChild(message);
 
 
 
-// allButton.addEventListener("click", getMovieData)
-// disneyButton.addEventListener("click", getDisneyMovieData)
-// marvelButton.addEventListener("click", getMarvelMovieData)
-// pixarButton.addEventListener("click", getPixarMovieData)
+allButton.addEventListener("click", getMovieData)
+disneyButton.addEventListener("click", getDisneyMovieData)
+marvelButton.addEventListener("click", getMarvelMovieData)
+pixarButton.addEventListener("click", getPixarMovieData)
 const watchlistButton = document.getElementById("watchlist-button")
 watchlistButton.addEventListener("click", viewWatchlist)
 const weatherButton = document.getElementById("weather-button")
@@ -121,7 +123,6 @@ addButton.addEventListener("click", addToWatchList)
 function addToWatchList(event) {
   // Get the movie title from the clicked element's parent div
   const movieTitle = event.target.closest('#listItem').querySelector('#movie-title').textContent;
-
   // Retrieve the existing watchlist from localStorage
   let watchlistItems = [];
 
@@ -184,9 +185,17 @@ export function setLocalStorage(key, data) {
         const forecastBox = document.createElement('div')
         forecastBox.setAttribute('id', "forecastBox")
         weatherBox.appendChild(forecastBox)
+        let contentBlock
+        if (data.list[10].main.temp_min < 50) {
+          contentBlock = "Brrr, that's way too cold! You should be inside!"
+        } else if (data.list[10].main.temp_min > 50 && data.list[10].main.temp_min < 60) {
+          contentBlock = "That's cold, you should definitely consider a movie!"
+        } else if (data.list[10].main.temp_max > 60) {
+          contentBlock = "That's too hot Stay in and watch a movie!</p>"
+        }
         forecastBox.innerHTML=`
         <h1>Weather<h1/>
-        <p id="weather-message">Everyone knows that the weather can play a role in your movie schedule! Check out tommorrow's forecast at 6pm in Salt Lake City, and plan on a movie if the weather is bad!</p>
+        <p id="weather-message">Everyone knows that the weather can play a role in your movie schedule! Check out tommorrow's forecast in Salt Lake City, and plan on a movie if the weather is bad!</p>
         <div id="weather-container">
         <p>City: ${data.city.name}</p>
         <p>Population: ${data.city.population}</p>
@@ -195,6 +204,7 @@ export function setLocalStorage(key, data) {
         <p>Temperature: ${data.list[10].main.temp_min} - ${data.list[10].main.temp_max}</p>
         <p>Humidity: ${data.list[10].main.humidity} Percent</p>
         <p>Wind Angle: ${data.list[10].wind.deg} Degrees</p>
+        <p>${contentBlock}</p>
         </div>
         
         `
@@ -209,7 +219,7 @@ export function setLocalStorage(key, data) {
   }
 
 
-  // function viewWeather() {
-  //   forecastFetch()
+  function viewWeather() {
+    forecastFetch()
     
-  //   }
+    }
