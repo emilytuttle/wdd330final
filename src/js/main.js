@@ -77,7 +77,7 @@ async function getPixarMovieData() {
   getData(pixarUrl)
 }
 
-// getMovieData()
+getMovieData()
 
 
 
