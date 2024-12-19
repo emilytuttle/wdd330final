@@ -9,7 +9,11 @@
   </head>
   <body>
     <header id="header">
-      <div id="main-title">Our Little Movie Theater</div>
+      <div id="main-title">
+        <img alt="film-logo" id="logo" src="./images/filmRoll.avif" width="150">
+        <div id="title">Our Little Movie Theater</div>
+        
+      </div>
       <nav>
         <div class="nav-item" id="all-button">Any Movies</div>
         <div class="nav-item" id="disney-button">Disney Movies</div>
@@ -20,6 +24,12 @@
       </nav>
     </header>
     <main>
+      <div id="custom-alert" class="modal">
+        <div class="modal-content">
+          <button id="close-alert" class="close-button">X</button><br>
+          <p id="alert-message"></p>
+        </div>
+      </div>
       <section class="main-section">
         <div id="movie-container">
 

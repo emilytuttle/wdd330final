@@ -77,7 +77,7 @@ async function getPixarMovieData() {
   getData(pixarUrl)
 }
 
-getMovieData()
+// getMovieData()
 
 
 
@@ -92,7 +92,7 @@ const message = document.createElement('div');
 box.setAttribute('id', "message")
 const watching = getLocalStorage("watchlist")
 if (watching) {
-  message.innerHTML = `<h2>Watchlist(${watching.length})</h2>`
+  message.innerHTML = `<h2 id="mywatchlistHeader">My Watchlist (${watching.length})</h2>`
 }
 box.appendChild(message);
  for(let i=0; i < watching.length; i++) {
@@ -116,14 +116,35 @@ watchlistButton.addEventListener("click", viewWatchlist)
 const weatherButton = document.getElementById("weather-button")
 weatherButton.addEventListener("click", viewWeather)
 
-const addButton = document.querySelectorAll(`add-to-watchlist`)
-addButton.addEventListener("click", addToWatchList)
+const addButtons = document.querySelectorAll(`add-to-watchlist`)
+addButtons.forEach(button => {
+  button.addEventListener("click", addToWatchList);
+});
 
+
+
+
+function showCustomAlert(message) {
+  const alertModal = document.getElementById('custom-alert');
+  const alertMessage = document.getElementById('alert-message');
+  const closeButton = document.getElementById('close-alert');
+  const modalContent = document.querySelector(".modal-content")
+
+  alertMessage.textContent = message;
+  alertModal.style.display = 'flex';
+  closeButton.addEventListener('click', () => {
+    alertModal.style.display = 'none'; 
+  });
+
+  window.addEventListener('click', (event) => {
+    if (event.target === alertModal) {
+      alertModal.style.display = 'none';
+    }
+  });
+}
 
 function addToWatchList(event) {
-  // Get the movie title from the clicked element's parent div
   const movieTitle = event.target.closest('#listItem').querySelector('#movie-title').textContent;
-  // Retrieve the existing watchlist from localStorage
   let watchlistItems = [];
 
     if (getLocalStorage("watchlist")) {
@@ -132,21 +153,26 @@ function addToWatchList(event) {
             watchlistItems = [];
             watchlistItems.push(movieTitle);
             setLocalStorage("watchlist", watchlistItems);
-            alert(`${movieTitle} has been added to your watchlist!`);
+            showCustomAlert(`${movieTitle} has been added to your watchlist!`);
         } else {
           if (!watchlistItems.includes(movieTitle)) {
             watchlistItems.push(movieTitle);
             setLocalStorage("watchlist", watchlistItems);
-            alert(`${movieTitle} has been added to your watchlist!`);
+            showCustomAlert(`${movieTitle} has been added to your watchlist!`);
           } else {
-            alert(`${movieTitle} is already in your watchlist.`);
+            showCustomAlert(`${movieTitle} is already in your watchlist!`);
+            // modalContent.classList.add("already-added")
+            // closeButton.classList.add("already-added-button")
+            modalContent.style.setProperty("border", "3px solid #ef3232", "important");
+            closeButton.style.setProperty("background-color", "#ef3232", "important");
           }
         }
         
     } else {
         watchlistItems.push(movieTitle);
         setLocalStorage("watchlist", watchlistItems);
-        alert(`${movieTitle} has been added to your watchlist!`);
+        showCustomAlert(`${movieTitle} has been added to your watchlist!`);
+        
     }
   
 }
@@ -194,7 +220,8 @@ export function setLocalStorage(key, data) {
           contentBlock = "That's too hot Stay in and watch a movie!</p>"
         }
         forecastBox.innerHTML=`
-        <h1>Weather<h1/>
+        <h1 id="weatherHeader">Weather<h1/>
+        <div id="flex">
         <p id="weather-message">Everyone knows that the weather can play a role in your movie schedule! Check out tommorrow's forecast in Salt Lake City, and plan on a movie if the weather is bad!</p>
         <div id="weather-container">
         <p>City: ${data.city.name}</p>
@@ -204,7 +231,9 @@ export function setLocalStorage(key, data) {
         <p>Temperature: ${data.list[10].main.temp_min} - ${data.list[10].main.temp_max}</p>
         <p>Humidity: ${data.list[10].main.humidity} Percent</p>
         <p>Wind Angle: ${data.list[10].wind.deg} Degrees</p>
-        <p>${contentBlock}</p>
+        
+        </div>
+        <p id="content">${contentBlock}</p>
         </div>
         
         `
